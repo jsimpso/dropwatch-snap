@@ -1,0 +1,39 @@
+name: dropwatch
+base: core22
+adopt-info: dropwatch
+summary: Kernel dropped packet monitor
+description: |
+  Dropwatch is a tool created by Neil Horman (https://github.com/nhorman) in an effort to improve the ability for developers and system administrators to diagnose problems in the Linux Networking stack, specifically in our ability to diagnose where packets are getting dropped.
+  
+  This is an unofficial snap which builds and repackages the source from nhorman at https://github.com/nhorman/dropwatch
+license: GPL-2.0-or-later
+source-code: https://github.com/jsimpso/dropwatch-snap
+website: https://github.com/nhorman/dropwatch
+grade: devel
+confinement: strict 
+
+apps:
+  dropwatch:
+    command: usr/local/bin/dropwatch
+    plugs: 
+      - network-observe
+
+parts:
+  dropwatch:
+    plugin: autotools
+    source: https://github.com/nhorman/dropwatch.git
+    override-pull: |
+      craftctl default
+      LATEST_RELEASE=$(curl https://api.github.com/repos/nhorman/dropwatch/releases/latest -s | jq -r .tag_name)
+      craftctl set version="$( echo ${LATEST_RELEASE} | sed -e 's/^v//')"
+      git -C "${CRAFT_PART_SRC}" reset --hard refs/tags/"${LATEST_RELEASE}"
+    build-packages:
+      - binutils-dev
+      - jq
+      - libnl-genl-3-dev
+      - libpcap-dev
+      - libreadline-dev
+      - pkg-config
+    stage-packages:
+      - binutils-dev
+
