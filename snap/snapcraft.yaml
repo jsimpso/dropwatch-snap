@@ -29,6 +29,7 @@ parts:
       git -C "${CRAFT_PART_SRC}" reset --hard refs/tags/"${LATEST_RELEASE}"
     build-packages:
       - binutils-dev
+      - curl
       - jq
       - libnl-genl-3-dev
       - libpcap-dev
